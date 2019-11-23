@@ -4,6 +4,11 @@
 # Put parameters here that don't need to change on each machine where the app is deployed
 # https://symfony.com/doc/current/best_practices/configuration.html#application-related-configuration
 parameters:
+  app.telegram.token: '%env(TELEGRAM_TOKEN)%'
+  app.telegram.bot.name: '%env(TELEGRAM_BOT_NAME)%'
+  app.telegram.channel.id: '%env(TELEGRAM_CHANNEL_ID)%'
+  app.realtby.login: '%env(REALTBY_LOGIN)%'
+  app.realtby.password: '%env(REALTBY_PASSWORD)%'
 
 services:
     # default configuration for services in *this* file
@@ -25,3 +30,15 @@ services:
 
     # add more service definitions when explicit configuration is needed
     # please note that last definitions always *replace* previous ones
+
+    Symfony\Component\BrowserKit\HttpBrowser:
+
+    App\EstateCrawler\Provider\OnlinerbyProvider:
+        tags: ['app.estate_crawler.provider']
+
+    App\EstateCrawler\Provider\RealtbyProvider:
+        tags: ['app.estate_crawler.provider']
+
+    App\EstateCrawler\EstateCrawler:
+        arguments:
+            - !tagged app.estate_crawler.provider

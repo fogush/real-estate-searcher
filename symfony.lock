@@ -1,4 +1,19 @@
 {
+    "doctrine/annotations": {
+        "version": "1.0",
+        "recipe": {
+            "repo": "github.com/symfony/recipes",
+            "branch": "master",
+            "version": "1.0",
+            "ref": "cb4152ebcadbe620ea2261da1a1c5a9b8cea7672"
+        },
+        "files": [
+            "config/routes/annotations.yaml"
+        ]
+    },
+    "doctrine/lexer": {
+        "version": "1.2.0"
+    },
     "psr/cache": {
         "version": "1.0.1"
     },
@@ -7,6 +22,21 @@
     },
     "psr/log": {
         "version": "1.1.2"
+    },
+    "sensio/framework-extra-bundle": {
+        "version": "5.2",
+        "recipe": {
+            "repo": "github.com/symfony/recipes",
+            "branch": "master",
+            "version": "5.2",
+            "ref": "fb7e19da7f013d0d422fa9bce16f5c510e27609b"
+        },
+        "files": [
+            "config/packages/sensio_framework_extra.yaml"
+        ]
+    },
+    "symfony/browser-kit": {
+        "version": "v4.3.8"
     },
     "symfony/cache": {
         "version": "v4.3.8"
@@ -30,10 +60,16 @@
             "config/bootstrap.php"
         ]
     },
+    "symfony/css-selector": {
+        "version": "v4.3.8"
+    },
     "symfony/debug": {
         "version": "v4.3.8"
     },
     "symfony/dependency-injection": {
+        "version": "v4.3.8"
+    },
+    "symfony/dom-crawler": {
         "version": "v4.3.8"
     },
     "symfony/dotenv": {
@@ -81,6 +117,12 @@
             "src/Controller/.gitignore",
             "src/Kernel.php"
         ]
+    },
+    "symfony/http-client": {
+        "version": "v4.3.8"
+    },
+    "symfony/http-client-contracts": {
+        "version": "v1.1.8"
     },
     "symfony/http-foundation": {
         "version": "v4.3.8"
