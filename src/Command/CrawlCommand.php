@@ -27,5 +27,7 @@ class CrawlCommand extends Command
     protected function execute(InputInterface $input, OutputInterface $output)
     {
         $output->writeln(print_r($this->crawler->run(), true));
+
+        return 0;
     }
 }
