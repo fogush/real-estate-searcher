@@ -1,7 +1,8 @@
 <?php
 
-namespace App\EstateCrawler\Provider;
+namespace App\RealEstateSearcher\Provider;
 
+use App\Entity\Collection\RealEstateCollection;
 use Symfony\Component\BrowserKit\HttpBrowser;
 
 class OnlinerbyProvider implements ProviderInterface
@@ -13,9 +14,9 @@ class OnlinerbyProvider implements ProviderInterface
         $this->browser = $browser;
     }
 
-    public function parseRealEstates()
+    public function parseRealEstates(): RealEstateCollection
     {
-        return [];
+        return new RealEstateCollection();
 //        $this->browser->request('GET', 'https://r.onliner.by');
 //
 //        return file_put_contents('onlinerby.html', $this->browser->getResponse()->getContent());

@@ -1,7 +1,8 @@
 <?php
 
-namespace App\EstateCrawler\Provider;
+namespace App\RealEstateSearcher\Provider;
 
+use App\Entity\Collection\RealEstateCollection;
 use App\Entity\RealEstate;
 use Symfony\Component\BrowserKit\HttpBrowser;
 use Symfony\Component\DependencyInjection\ParameterBag\ParameterBagInterface;
@@ -9,9 +10,7 @@ use Symfony\Component\DomCrawler\Crawler;
 
 class RealtbyProvider implements ProviderInterface
 {
-    private const REALTBY_URL = 'https://realt.by/sale/flats/?request=46379&days=all&view=%d&page=%d';
-    private const VIEW_TABLE = 0;
-    private const VIEW_PHOTO = 1;
+    private const REALTBY_URL = 'https://realt.by/sale/flats/?request=46379&days=all&view=0&page=%d';
 
     private $browser;
     private $realtbyLogin;
@@ -24,11 +23,11 @@ class RealtbyProvider implements ProviderInterface
         $this->realtbyPassword = $parameterBag->get('app.realtby.password');
     }
 
-    public function parseRealEstates(): array
+    public function parseRealEstates(): RealEstateCollection
     {
         $this->logInToRealtby();
 
-        $realEstates = [];
+        $realEstates = new RealEstateCollection();
         $pageNumber = 0;
 
         while (true) {
@@ -43,7 +42,10 @@ class RealtbyProvider implements ProviderInterface
             //TODO: remove it
 //            file_put_contents("var/realtby_$pageNumber.html", $this->browser->getResponse()->getContent());
 
-            $realEstates[] = $this->parsePage($crawledPage);
+            $parsedRealEstates = $this->parsePage($crawledPage);
+            foreach ($parsedRealEstates as $realEstate) {
+                $realEstates->add($realEstate);
+            }
 
             $pageNumber = $this->getNextPageNumber($crawledPage, $pageNumber);
             if ($pageNumber === null || $pageNumber > 4) {
@@ -51,7 +53,7 @@ class RealtbyProvider implements ProviderInterface
             }
         }
 
-        return array_merge(...$realEstates);
+        return $realEstates;
     }
 
     private function logInToRealtby(): void
@@ -65,20 +67,17 @@ class RealtbyProvider implements ProviderInterface
 
     private function requestPage(int $pageNumber = 0): Crawler
     {
-        return $this->browser->request('GET', sprintf(self::REALTBY_URL, self::VIEW_TABLE, $pageNumber));
+        return $this->browser->request('GET', sprintf(self::REALTBY_URL, $pageNumber));
     }
 
-    /**
-     * @return RealEstate[]|array
-     */
-    private function parsePage(Crawler $crawledPage): array
+    private function parsePage(Crawler $crawledPage): RealEstateCollection
     {
-        $realEstates = [];
+        $realEstates = new RealEstateCollection();
 
         $crawledPage
             ->filter('.bd-table > .bd-table-item')
             ->each(function (Crawler $node, $i) use (&$realEstates) {
-                $realEstates[] = $this->getRealEstate($node);
+                $realEstates->add($this->getRealEstate($node));
             });
 
         return $realEstates;

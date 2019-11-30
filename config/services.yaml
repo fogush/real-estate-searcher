@@ -9,6 +9,7 @@ parameters:
   app.telegram.channel.id: '%env(TELEGRAM_CHANNEL_ID)%'
   app.realtby.login: '%env(REALTBY_LOGIN)%'
   app.realtby.password: '%env(REALTBY_PASSWORD)%'
+  app.email.recipients: '%env(json:EMAIL_RECIPIENTS)%'
 
 services:
     # default configuration for services in *this* file
@@ -33,12 +34,13 @@ services:
 
     Symfony\Component\BrowserKit\HttpBrowser:
 
-    App\EstateCrawler\Provider\OnlinerbyProvider:
+    App\RealEstateSearcher\Provider\OnlinerbyProvider:
         tags: ['app.estate_crawler.provider']
 
-    App\EstateCrawler\Provider\RealtbyProvider:
+    App\RealEstateSearcher\Provider\RealtbyProvider:
         tags: ['app.estate_crawler.provider']
 
-    App\EstateCrawler\EstateCrawler:
+    App\RealEstateSearcher\RealEstateSearcher:
         arguments:
-            - !tagged app.estate_crawler.provider
+            $providers: !tagged app.estate_crawler.provider
+            $sender: '@App\RealEstateSearcher\Sender\MailSender'
