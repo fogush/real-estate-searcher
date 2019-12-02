@@ -6,7 +6,7 @@ networks:
 
 services:
   nginx:
-    image: real-estate-searcher/nginx
+    image: fogush/real-estate-searcher-nginx
     build:
       context: .
       dockerfile: ./nginx/Dockerfile
@@ -28,7 +28,7 @@ services:
           - ${APP_HOST}
 
   php-fpm:
-    image: real-estate-searcher/php-fpm
+    image: fogush/real-estate-searcher-php-fpm
     build:
       context: .
       dockerfile: ./php-fpm/Dockerfile
@@ -46,7 +46,7 @@ services:
       - backend
 
   workspace:
-    image: real-estate-searcher/workspace
+    image: fogush/real-estate-searcher-workspace
     build:
       context: .
       dockerfile: ./workspace/Dockerfile
@@ -66,7 +66,7 @@ services:
       - backend
 
   mysql:
-    image: real-estate-searcher/mysql
+    image: fogush/real-estate-searcher-mysql
     build:
       context: .
       dockerfile: ./mysql/Dockerfile
