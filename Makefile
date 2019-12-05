@@ -45,6 +45,6 @@ docker-up: docker-init ## Start all docker containers. To only start one contain
 docker-down: docker-init ## Stop all docker containers. To only stop one container, use CONTAINER=<service>
 	$(DOCKER_COMPOSE) down $(CONTAINER)
 
-.PHONY: docker-run
-docker-run: docker-run ## Run a command in a specific container, use CONTAINER=<service> COMMAND=<command>
+.PHONY: docker-exec
+docker-exec: docker-init ## Run a command in a specific container, use CONTAINER=<service> COMMAND=<command>
 	$(DOCKER_COMPOSE) exec $(CONTAINER) $(COMMAND)

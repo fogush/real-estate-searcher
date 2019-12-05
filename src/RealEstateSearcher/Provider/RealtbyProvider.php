@@ -191,9 +191,9 @@ class RealtbyProvider implements ProviderInterface
         }
 
         return [
-            (int) ($areaTotal * 10000),
-            $areaLiving !== '—' ? (int) ($areaLiving * 10000) : null,
-            $areaKitchen !== '—' ? (int) ($areaKitchen * 10000) : null,
+            (int) ($areaTotal * RealEstate::SQUARE_CM_PER_M),
+            $areaLiving !== '—' ? (int) ($areaLiving * RealEstate::SQUARE_CM_PER_M) : null,
+            $areaKitchen !== '—' ? (int) ($areaKitchen * RealEstate::SQUARE_CM_PER_M) : null,
         ];
     }
 

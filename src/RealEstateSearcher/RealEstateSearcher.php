@@ -27,10 +27,16 @@ class RealEstateSearcher
         $this->sender = $sender;
     }
 
-    public function run(): ?RealEstateCollection
+    public function run($sendAll = false): ?RealEstateCollection
     {
         $realEstates = $this->parseSites();
-        $newRealEstates = $this->getNew($realEstates);
+
+        if ($sendAll) {
+            $newRealEstates = $realEstates;
+        } else {
+            $newRealEstates = $this->getNew($realEstates);
+        }
+
         if ($newRealEstates->isEmpty()) {
             return null;
         }

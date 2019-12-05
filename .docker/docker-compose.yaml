@@ -83,3 +83,11 @@ services:
       - "${DATABASE_PORT}:3306"
     networks:
       - backend
+  mail:
+    image: fogush/mail
+    build:
+      context: .
+      dockerfile: ./mail/Dockerfile
+    ports:
+      - "${MAIL_SMTP_PORT}:2500"
+      - "${MAIL_UI_PORT}:9000"

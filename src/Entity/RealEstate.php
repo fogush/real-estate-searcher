@@ -12,6 +12,8 @@ use Symfony\Component\Validation\Constraints AS Assert;
  */
 class RealEstate
 {
+    const SQUARE_CM_PER_M = 10000;
+
     /**
      * @ORM\Id
      * @ORM\Column(type="integer")
@@ -135,14 +137,29 @@ class RealEstate
         return $this->areaTotalCm;
     }
 
+    public function getAreaTotalMeters(): int
+    {
+        return $this->areaTotalCm / self::SQUARE_CM_PER_M;
+    }
+
     public function getAreaLivingCm(): ?int
     {
         return $this->areaLivingCm;
     }
 
+    public function getAreaLivingMeters(): ?int
+    {
+        return $this->areaLivingCm ? $this->areaLivingCm / self::SQUARE_CM_PER_M : null;
+    }
+
     public function getAreaKitchenCm(): ?int
     {
         return $this->areaKitchenCm;
+    }
+
+    public function getAreaKitchenMeters(): ?int
+    {
+        return $this->areaKitchenCm ? $this->areaKitchenCm / self::SQUARE_CM_PER_M : null;
     }
 
     public function getLink(): string

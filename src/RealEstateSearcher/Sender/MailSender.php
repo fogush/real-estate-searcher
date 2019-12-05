@@ -21,7 +21,11 @@ class MailSender implements SenderInterface
 
     public function send(RealEstateCollection $realEstateCollection): bool
     {
-        $message = (new \Swift_Message('Hello Email'))
+        if (empty($this->emailRecipients)) {
+            return false;
+        }
+
+        $message = (new \Swift_Message('Найдены новые объекты недвижимости'))
             ->setFrom('realt.crawler.sender@gmail.com', 'Real Estate Notifier')
             ->setTo($this->emailRecipients)
             ->setBody(
