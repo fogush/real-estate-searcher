@@ -32,9 +32,9 @@ class RealtbyProvider implements ProviderInterface
 
         while (true) {
             //TODO: remove it and uncomment below
-            $crawledPage = new Crawler(file_get_contents("var/realtby_$pageNumber.html"));
+//            $crawledPage = new Crawler(file_get_contents("var/realtby_$pageNumber.html"));
 
-//            $crawledPage = $this->requestPage($pageNumber);
+            $crawledPage = $this->requestPage($pageNumber);
 
             if (!\count($crawledPage)) {
                 throw new \RuntimeException('Content from realt.by is empty');
@@ -76,7 +76,7 @@ class RealtbyProvider implements ProviderInterface
 
         $crawledPage
             ->filter('.bd-table > .bd-table-item')
-            ->each(function (Crawler $node, $i) use (&$realEstates) {
+            ->each(function (Crawler $node) use (&$realEstates) {
                 $realEstates->add($this->getRealEstate($node));
             });
 
