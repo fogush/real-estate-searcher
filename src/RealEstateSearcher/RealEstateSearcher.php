@@ -40,7 +40,7 @@ class RealEstateSearcher
         if ($newRealEstates->isEmpty()) {
             return null;
         }
-        if (!$this->saveNew($newRealEstates)) {
+        if (!$sendAll && !$this->saveNew($newRealEstates)) {
             throw new \RuntimeException('Failed to save new real estates');
         }
         if (!$this->sendNew($newRealEstates)) {

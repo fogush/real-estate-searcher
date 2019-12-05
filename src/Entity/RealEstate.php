@@ -179,6 +179,6 @@ class RealEstate
 
     public function getPriceOneMeterDollars(): ?int
     {
-        return round($this->getPriceDollars() / $this->getAreaTotalCm(), 0);
+        return round($this->getPriceDollars() / $this->getAreaTotalMeters(), 0);
     }
 }

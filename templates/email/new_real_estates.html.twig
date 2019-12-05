@@ -35,10 +35,6 @@
             <div class="column-value"><a href="{{ realEstate.link }}">{{ realEstate.link }}</a></div>
         </div>
         <div class="row">
-            <div class="column-name">Цена:</div>
-            <div class="column-value">{{ realEstate.priceDollars }}$</div>
-        </div>
-        <div class="row">
             <div class="column-name">Количество комнат:</div>
             <div class="column-value">{{ realEstate.numberOfRooms }}</div>
         </div>
@@ -78,6 +74,14 @@
                 <div class="column-value">{{ realEstate.yearRepair }}</div>
             </div>
         {% endif %}
+        <div class="row">
+            <div class="column-name">Цена:</div>
+            <div class="column-value">{{ realEstate.priceDollars }}$</div>
+        </div>
+        <div class="row">
+            <div class="column-name">Цена за метр:</div>
+            <div class="column-value">{{ realEstate.priceOneMeterDollars }}$</div>
+        </div>
     </div>
 {% endfor %}
 </body>

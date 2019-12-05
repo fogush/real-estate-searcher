@@ -10,7 +10,7 @@ use Symfony\Component\DomCrawler\Crawler;
 
 class RealtbyProvider implements ProviderInterface
 {
-    private const REALTBY_URL = 'https://realt.by/sale/flats/?request=46379&days=all&view=0&page=%d';
+    private const REALTBY_URL = 'https://realt.by/sale/flats/?request=46385&days=all&view=0&page=%d';
 
     private $browser;
     private $realtbyLogin;
@@ -48,7 +48,7 @@ class RealtbyProvider implements ProviderInterface
             }
 
             $pageNumber = $this->getNextPageNumber($crawledPage, $pageNumber);
-            if ($pageNumber === null || $pageNumber > 4) {
+            if ($pageNumber === null) {
                 break;
             }
         }
@@ -110,7 +110,7 @@ class RealtbyProvider implements ProviderInterface
 
     private function getPriceDollars(Crawler $node): int
     {
-        $priceDollars = $node->filter('.cena .price-switchable:first-child')->attr('data-840');
+        $priceDollars = $node->filter('.cena .price-switchable')->first()->attr('data-840');
 
         $priceDollars = str_replace(['&nbsp;', '', '$'], '', $priceDollars);
 
@@ -232,6 +232,9 @@ class RealtbyProvider implements ProviderInterface
     private function getNextPageNumber(Crawler $crawledPage, int $currentPageNumber): ?int
     {
         $pages = $crawledPage->filter('.uni-paging')->first();
+        if (!$pages->count()) {
+            return null;
+        }
 
         $nextPages = $pages->filter('a.active')->nextAll();
 
