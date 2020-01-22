@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+</head>
+<style type="text/css">
+    .header {
+        margin-bottom: 30px;
+    }
+    .real-estate {
+        display: table;
+        margin-bottom: 30px;
+    }
+    .row {
+        display: table-row;
+    }
+    .column-name {
+        display: table-cell;
+        width: 40%;
+        font-weight: bold;
+    }
+    .column-value {
+        display: table-cell;
+        width: 60%;
+    }
+</style>
+<body>
+<div class="header">
+    Объекты недвижимости пропали из поиска (всего {{ realEstates|length }}).<br>
+    Информация на момент попадания в базу:
+</div>
+{% for realEstate in realEstates %}
+    <div class="real-estate">
+        <div class="row">
+            <div class="column-name">Ссылка:</div>
+            <div class="column-value">(нерабочая!) <a href="{{ realEstate.link }}">{{ realEstate.link }}</a></div>
+        </div>
+        <div class="row">
+            <div class="column-name">Адрес:</div>
+            <div class="column-value">{{ realEstate.address }}</div>
+        </div>
+        <div class="row">
+            <div class="column-name">Этаж:</div>
+            <div class="column-value">{{ realEstate.floor }} из {{ realEstate.floorsTotal }}</div>
+        </div>
+        <div class="row">
+            <div class="column-name">Общая площадь:</div>
+            <div class="column-value">{{ realEstate.areaTotalMeters }} м^2</div>
+        </div>
+        {% if (realEstate.areaLivingMeters) %}
+            <div class="row">
+                <div class="column-name">Площадь жилая:</div>
+                <div class="column-value">{{ realEstate.areaLivingMeters }} м^2</div>
+            </div>
+        {% endif %}
+        {% if (realEstate.areaKitchenMeters) %}
+            <div class="row">
+                <div class="column-name">Площадь кухни:</div>
+                <div class="column-value">{{ realEstate.areaKitchenMeters }} м^2</div>
+        </div>
+        {% endif %}
+        {% if (realEstate.yearConstruction) %}
+            <div class="row">
+                <div class="column-name">Год постройки:</div>
+                <div class="column-value">{{ realEstate.yearConstruction }}</div>
+            </div>
+        {% endif %}
+        {% if (realEstate.yearRepair) %}
+            <div class="row">
+                <div class="column-name">Год кап. ремонта:</div>
+                <div class="column-value">{{ realEstate.yearRepair }}</div>
+            </div>
+        {% endif %}
+        <div class="row">
+            <div class="column-name">Цена:</div>
+            <div class="column-value">{{ realEstate.priceDollars }}$</div>
+        </div>
+        <div class="row">
+            <div class="column-name">Цена за метр:</div>
+            <div class="column-value">{{ realEstate.priceOneMeterDollars }}$</div>
+        </div>
+    </div>
+{% endfor %}
+</body>
+</html>
+

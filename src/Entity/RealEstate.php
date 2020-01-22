@@ -9,10 +9,11 @@ use Symfony\Component\Validation\Constraints AS Assert;
  * TODO: add constraints
  *
  * @ORM\Entity(repositoryClass="App\Repository\RealEstateRepository")
+ * @ORM\Table(name="real_estate")
  */
 class RealEstate
 {
-    const SQUARE_CM_PER_M = 10000;
+    public const SQUARE_CM_PER_M = 10000;
 
     /**
      * @ORM\Id
@@ -75,6 +76,11 @@ class RealEstate
      * @ORM\Column(type="smallint", name="year_repair", nullable=true, options={"unsigned": true})
      */
     private $yearRepair;
+
+    /**
+     * @ORM\Column(type="boolean", name="deleted", options={"default": false})
+     */
+    private $deleted = false;
 
     public function __construct(
         string $link,
@@ -180,5 +186,15 @@ class RealEstate
     public function getPriceOneMeterDollars(): ?int
     {
         return round($this->getPriceDollars() / $this->getAreaTotalMeters(), 0);
+    }
+
+    public function getDeleted(): bool
+    {
+        return $this->deleted;
+    }
+
+    public function setDeleted(bool $deleted): void
+    {
+        $this->deleted = $deleted;
     }
 }

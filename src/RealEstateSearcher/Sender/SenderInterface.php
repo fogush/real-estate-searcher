@@ -6,5 +6,6 @@ use App\Entity\Collection\RealEstateCollection;
 
 interface SenderInterface
 {
-    public function send(RealEstateCollection $realEstateCollection): bool;
+    public function sendNew(RealEstateCollection $realEstateCollection): bool;
+    public function sendDeleted(RealEstateCollection $realEstateCollection): bool;
 }

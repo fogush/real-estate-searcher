@@ -30,6 +30,12 @@ class CrawlCommand extends Command
                 InputOption::VALUE_NONE,
                 'Send all parsed real estates'
             )
+            ->addOption(
+                'dry-run',
+                'd',
+                InputOption::VALUE_NONE,
+                'Do not send anything, but do all the same'
+            )
         ;
     }
 
@@ -38,13 +44,24 @@ class CrawlCommand extends Command
         $io = new SymfonyStyle($input, $output);
 
         $sendAll = $input->getOption('send-all');
+        $dryRun = $input->getOption('dry-run');
 
-        $newRealEstates = $this->searcher->run($sendAll);
+        if ($dryRun) {
+            $io->warning('Dry run mode');
+        }
 
-        if ($newRealEstates && $newRealEstates->count()) {
-            $io->success(sprintf('Found %d new real estates', $newRealEstates->count()));
+        $realEstates = $this->searcher->run($sendAll, $dryRun);
+
+        if ($realEstates['new'] && $realEstates['new']->count()) {
+            $io->success(sprintf('Found %d new real estates', $realEstates['new']->count()));
         } else {
             $io->note('No new real estates found');
+        }
+
+        if ($realEstates['removed'] && $realEstates['removed']->count()) {
+            $io->success(sprintf('Found %d removed real estates', $realEstates['removed']->count()));
+        } else {
+            $io->note('No removed real estates found');
         }
 
         return 0;

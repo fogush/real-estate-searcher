@@ -16,9 +16,11 @@ class RealEstateSearcher
     private $realEstateManager;
     private $sender;
 
+    private $sendAll;
+    private $dryRun;
+
     /**
-     * @param ProviderInterface[]|array $providers
-     * @param RealEstateManager $realEstateManager
+     * @param ProviderInterface[]|iterable $providers
      */
     public function __construct(iterable $providers, RealEstateManager $realEstateManager, SenderInterface $sender)
     {
@@ -27,27 +29,17 @@ class RealEstateSearcher
         $this->sender = $sender;
     }
 
-    public function run($sendAll = false): ?RealEstateCollection
+    public function run($sendAll = false, $dryRun = false): array
     {
-        $realEstates = $this->parseSites();
+        $this->sendAll = $sendAll;
+        $this->dryRun = $dryRun;
 
-        if ($sendAll) {
-            $newRealEstates = $realEstates;
-        } else {
-            $newRealEstates = $this->getNew($realEstates);
-        }
+        $parsedRealEstates = $this->parseSites();
 
-        if ($newRealEstates->isEmpty()) {
-            return null;
-        }
-        if (!$sendAll && !$this->saveNew($newRealEstates)) {
-            throw new \RuntimeException('Failed to save new real estates');
-        }
-        if (!$this->sendNew($newRealEstates)) {
-            throw new \RuntimeException('Failed to send new real estates');
-        }
+        $newRealEstates = $this->processNew($parsedRealEstates);
+        $removedRealEstates = $this->processRemoved($parsedRealEstates);
 
-        return $newRealEstates;
+        return ['new' => $newRealEstates, 'removed' => $removedRealEstates];
     }
 
     private function parseSites()
@@ -64,13 +56,65 @@ class RealEstateSearcher
         return $realEstates;
     }
 
-    private function getNew(RealEstateCollection $realEstates): RealEstateCollection
+    private function processNew(RealEstateCollection $parsedRealEstates): ?RealEstateCollection
+    {
+        if ($this->sendAll) {
+            $newRealEstates = $parsedRealEstates;
+        } else {
+            $newRealEstates = $this->getNew($parsedRealEstates);
+        }
+
+        if ($newRealEstates->isEmpty()) {
+            return null;
+        }
+        if ($this->dryRun) {
+            return $newRealEstates;
+        }
+        if (!$this->sendAll && !$this->saveNew($newRealEstates)) {
+            throw new \RuntimeException('Failed to save new real estates');
+        }
+        if (!$this->sendNew($newRealEstates)) {
+            throw new \RuntimeException('Failed to send new real estates');
+        }
+
+        return $newRealEstates;
+    }
+
+    private function processRemoved(RealEstateCollection $parsedRealEstates): ?RealEstateCollection
+    {
+        //TODO: implement this (mark deleted as 'deleted = 1' to do not grab them again)
+        $deletedRealEstates = $this->getDeleted($parsedRealEstates);
+
+        if ($deletedRealEstates->isEmpty()) {
+            return null;
+        }
+        if ($this->dryRun) {
+            return $deletedRealEstates;
+        }
+
+        $this->markDeletedAsDeleted($deletedRealEstates);
+
+        if (!$this->sendDeleted($deletedRealEstates)) {
+            throw new \RuntimeException('Failed to send deleted real estates');
+        }
+
+        return $deletedRealEstates;
+    }
+
+    private function getNew(RealEstateCollection $parsedRealEstates): RealEstateCollection
     {
         $newRealEstates = new RealEstateCollection();
 
-        foreach ($realEstates as $realEstate) {
-            $found = (bool) $this->realEstateManager->findByLink($realEstate->getLink());
-            if (!$found) {
+        foreach ($parsedRealEstates as $realEstate) {
+            $foundRealEstate = $this->realEstateManager->findByLink($realEstate->getLink());
+
+            //Restore previously deleted real estates
+            if ($foundRealEstate && $foundRealEstate->getDeleted()) {
+                $foundRealEstate->setDeleted(false);
+                $newRealEstates->add($foundRealEstate);
+            }
+
+            if (!$foundRealEstate) {
                 $newRealEstates->add($realEstate);
             }
         }
@@ -85,6 +129,21 @@ class RealEstateSearcher
 
     private function sendNew(RealEstateCollection $realEstates): bool
     {
-        return $this->sender->send($realEstates);
+        return $this->sender->sendNew($realEstates);
+    }
+
+    private function getDeleted(RealEstateCollection $parsedRealEstates): RealEstateCollection
+    {
+        return $this->realEstateManager->getDeleted($parsedRealEstates);
+    }
+
+    private function markDeletedAsDeleted(RealEstateCollection $realEstates)
+    {
+        $this->realEstateManager->markDeletedAsDeleted($realEstates);
+    }
+
+    private function sendDeleted(RealEstateCollection $realEstates): bool
+    {
+        return $this->sender->sendDeleted($realEstates);
     }
 }
