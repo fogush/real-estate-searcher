@@ -9,6 +9,7 @@ parameters:
   app.telegram.channel.id: '%env(TELEGRAM_CHANNEL_ID)%'
   app.realtby.login: '%env(REALTBY_LOGIN)%'
   app.realtby.password: '%env(REALTBY_PASSWORD)%'
+  app.realtby.request_id: '%env(REALTBY_REQUEST_ID)%'
   app.email.recipients: '%env(json:EMAIL_RECIPIENTS)%'
 
 services:

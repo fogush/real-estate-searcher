@@ -1,5 +1,10 @@
-### Installation
+### About
+This application runs a command that parses real estate sites and sends updates.
+For realt.by you need to create a filter ("заявка"), copy it's id from URL 
+(e.g. 39152 for https://realt.by/sale/flats/?request=39152) and put into the settings file below
 
+### Installation
+Install Docker (https://docs.docker.com/install) and Docker Compose (https://docs.docker.com/compose/install/)
 ```shell script
 sudo apt install make
 git clone https://github.com/fogush/real-estate-searcher.git
@@ -21,6 +26,9 @@ APP_SECRET=qufb7dWbSpUg8Bdexmoe72
 # Your login (email) and password from realt.by
 REALTBY_LOGIN=example@example.com
 REALTBY_PASSWORD=example
+
+# Request ID (Заявка) - your search filters
+REALTBY_REQUEST_ID=99999
 
 # A list of recipients who will receive updates. In JSON format
 EMAIL_RECIPIENTS='["example@example.com", "example2@example2.com"]'

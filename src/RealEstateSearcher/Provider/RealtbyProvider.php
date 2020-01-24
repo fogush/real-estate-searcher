@@ -10,7 +10,7 @@ use Symfony\Component\DomCrawler\Crawler;
 
 class RealtbyProvider implements ProviderInterface
 {
-    private const REALTBY_URL = 'https://realt.by/sale/flats/?request=46385&days=all&view=0&page=%d';
+    private const REALTBY_URL = 'https://realt.by/sale/flats/?request=%d&days=all&view=0&page=%d';
 
     private $browser;
     private $realtbyLogin;
@@ -21,6 +21,7 @@ class RealtbyProvider implements ProviderInterface
         $this->browser = $browser;
         $this->realtbyLogin = $parameterBag->get('app.realtby.login');
         $this->realtbyPassword = $parameterBag->get('app.realtby.password');
+        $this->requestId = $parameterBag->get('app.realtby.request_id');
     }
 
     public function parseRealEstates(): RealEstateCollection
@@ -67,7 +68,7 @@ class RealtbyProvider implements ProviderInterface
 
     private function requestPage(int $pageNumber = 0): Crawler
     {
-        return $this->browser->request('GET', sprintf(self::REALTBY_URL, $pageNumber));
+        return $this->browser->request('GET', sprintf(self::REALTBY_URL, $this->requestId, $pageNumber));
     }
 
     private function parsePage(Crawler $crawledPage): RealEstateCollection
