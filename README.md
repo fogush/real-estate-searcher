@@ -1,7 +1,8 @@
 ### About
 This application runs a command that parses real estate sites and sends updates.
-For realt.by you need to create a filter ("заявка"), copy it's id from URL 
-(e.g. 39152 for https://realt.by/sale/flats/?request=39152) and put into the settings file below
+For realt.by you need to create a request ("заявка", https://realt.by/account/requests/), copy its ID from URL 
+(e.g. 39152 for https://realt.by/sale/flats/?request=39152) and put into the settings file below. 
+Only tested for apartments. Offices, houses and rent may not work correctly
 
 ### Installation
 Install Docker (https://docs.docker.com/install) and Docker Compose (https://docs.docker.com/compose/install/)
