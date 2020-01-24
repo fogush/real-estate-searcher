@@ -1,6 +1,8 @@
 .idea
 .docker/.env
 .docker/mysql/data
+.docker/workspace/.ssh/id_rsa
+.docker/workspace/.ssh/id_rsa.pub
 
 ###> symfony/framework-bundle ###
 /.env.local

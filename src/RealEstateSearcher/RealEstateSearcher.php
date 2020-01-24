@@ -18,6 +18,7 @@ class RealEstateSearcher
 
     private $sendAll;
     private $dryRun;
+    private $noRemoved;
 
     /**
      * @param ProviderInterface[]|iterable $providers
@@ -29,17 +30,25 @@ class RealEstateSearcher
         $this->sender = $sender;
     }
 
-    public function run($sendAll = false, $dryRun = false): array
+    public function run($sendAll = false, $dryRun = false, $noRemoved = false): array
     {
         $this->sendAll = $sendAll;
         $this->dryRun = $dryRun;
+        $this->noRemoved = $noRemoved;
+
+        $result = [];
 
         $parsedRealEstates = $this->parseSites();
 
         $newRealEstates = $this->processNew($parsedRealEstates);
-        $removedRealEstates = $this->processRemoved($parsedRealEstates);
+        $result['new'] = $newRealEstates;
 
-        return ['new' => $newRealEstates, 'removed' => $removedRealEstates];
+        if (!$this->noRemoved) {
+            $removedRealEstates = $this->processRemoved($parsedRealEstates);
+            $result['removed'] = $removedRealEstates;
+        }
+
+        return $result;
     }
 
     private function parseSites()

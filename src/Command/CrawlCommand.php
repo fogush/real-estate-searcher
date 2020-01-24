@@ -28,13 +28,19 @@ class CrawlCommand extends Command
                 'send-all',
                 'a',
                 InputOption::VALUE_NONE,
-                'Send all parsed real estates'
+                'Send all parsed real estates, even already found. It makes sense for testing only'
             )
             ->addOption(
                 'dry-run',
                 'd',
                 InputOption::VALUE_NONE,
                 'Do not send anything, but do all the same'
+            )
+            ->addOption(
+                'no-removed',
+                'r',
+                InputOption::VALUE_NONE,
+                'Do not check which real estates are removed'
             )
         ;
     }
@@ -45,12 +51,13 @@ class CrawlCommand extends Command
 
         $sendAll = $input->getOption('send-all');
         $dryRun = $input->getOption('dry-run');
+        $noRemoved = $input->getOption('no-removed');
 
         if ($dryRun) {
             $io->warning('Dry run mode');
         }
 
-        $realEstates = $this->searcher->run($sendAll, $dryRun);
+        $realEstates = $this->searcher->run($sendAll, $dryRun, $noRemoved);
 
         if ($realEstates['new'] && $realEstates['new']->count()) {
             $io->success(sprintf('Found %d new real estates', $realEstates['new']->count()));
@@ -58,10 +65,12 @@ class CrawlCommand extends Command
             $io->note('No new real estates found');
         }
 
-        if ($realEstates['removed'] && $realEstates['removed']->count()) {
-            $io->success(sprintf('Found %d removed real estates', $realEstates['removed']->count()));
-        } else {
-            $io->note('No removed real estates found');
+        if (!$noRemoved) {
+            if ($realEstates['removed'] && $realEstates['removed']->count()) {
+                $io->success(sprintf('Found %d removed real estates', $realEstates['removed']->count()));
+            } else {
+                $io->note('No removed real estates found');
+            }
         }
 
         return 0;

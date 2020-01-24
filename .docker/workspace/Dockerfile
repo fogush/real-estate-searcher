@@ -29,9 +29,9 @@ RUN apt-get update -yqq && apt-get install -yqq openssh-server \
 # add default public key to authorized_keys
 # TODO: Get rid of insecure keys
 USER ${APP_USER}
-COPY ${SERVICE_DIR}/.ssh/insecure_id_rsa.pub /tmp/insecure_id_rsa.pub
+COPY ${SERVICE_DIR}/.ssh/id_rsa.pub /tmp/id_rsa.pub
 RUN mkdir -p ~/.ssh \
- && cat /tmp/insecure_id_rsa.pub >> ~/.ssh/authorized_keys \
+ && cat /tmp/id_rsa.pub >> ~/.ssh/authorized_keys \
  && chown -R ${APP_USER}: ~/.ssh \
  && chmod 700 ~/.ssh \
  && chmod 600 ~/.ssh/authorized_keys \

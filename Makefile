@@ -10,13 +10,15 @@ help:
 ##@ [Docker] Build / Infrastructure
 .docker/.env:
 	cp $(DOCKER_COMPOSE_DIR)/.env.dist $(DOCKER_COMPOSE_DIR)/.env
+	ssh-keygen -t rsa -b 4096 -f .docker/workspace/.ssh/id_rsa -q -N ""
 
 .PHONY: docker-clean
-docker-clean: ## Remove the .env file for docker
+docker-clean: ## Remove the .env file and SSH keys
 	rm -f $(DOCKER_COMPOSE_DIR)/.env
+	rm -f $(DOCKER_COMPOSE_DIR)/workspace/.ssh/id_rsa $(DOCKER_COMPOSE_DIR)/workspace/.ssh/id_rsa.pub
 
 .PHONY: docker-init
-docker-init: .docker/.env ## Make sure the .env file exists for docker
+docker-init: .docker/.env ## Make sure the .env file exists for docker and generate SSH key for workspace
 
 .PHONY: docker-build-from-scratch
 docker-build-from-scratch: docker-init ## Build all docker images from scratch, without cache etc. Build a specific image by providing the service name via: make docker-build CONTAINER=<service>
@@ -48,3 +50,15 @@ docker-down: docker-init ## Stop all docker containers. To only stop one contain
 .PHONY: docker-exec
 docker-exec: docker-init ## Run a command in a specific container, use CONTAINER=<service> COMMAND=<command>
 	$(DOCKER_COMPOSE) exec $(CONTAINER) $(COMMAND)
+
+.PHONY: install
+install: docker-init ## Install the application
+	make docker-build
+	make docker-up
+	make docker-exec CONTAINER=workspace COMMAND="php composer.phar install"
+	#FIXME: mysql requires some time to start (5-10 sec). If vendors are already installed, the next commands will fail
+	sleep 10
+	#FIXME: for some reason mysql doesn't receive connections until a first connection from CLI
+	make docker-exec CONTAINER=mysql COMMAND="mysql -h localhost -u real-estate-searcher -preal-estate-searcher -e 'SELECT 1'"
+	make docker-exec CONTAINER=workspace COMMAND="bin/console doctrine:migrations:migrate -n"
+
