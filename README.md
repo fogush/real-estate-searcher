@@ -1,5 +1,6 @@
 ### About
 This application runs a command that parses real estate sites and sends updates.
+
 For realt.by you need to create a request ("заявка", https://realt.by/account/requests/), copy its ID from URL 
 (e.g. 39152 for https://realt.by/sale/flats/?request=39152) and put into the settings file below. 
 Only tested for apartments. Offices, houses and rent may not work correctly
@@ -45,13 +46,13 @@ docker-compose exec workspace bin/console app:crawl
 make docker-exec CONTAINER=workspace COMMAND="bin/console app:crawl"
 ```
 The command has options:
-  -a, --send-all        Send all parsed real estates, even already found. It makes sense for testing only
-  -d, --dry-run         Do not send anything, but do all the same
-  -r, --no-removed      Do not check which real estates are removed
-
+- `-a`, `--send-all` - send all parsed real estates, even already found. It makes sense for testing only
+- `-d`, `--dry-run` - do not send anything, but do all the same
+- `-r`, `--no-removed` - do not check which real estates are removed
 
 ### Manual testing
 Add `--dry-run` to skip saving into the database and sending emails.
+
 To check removing is working, copy some record in real_estate and change its link, for example:
 ```sql
 INSERT INTO `real-estate-searcher`.`real_estate` (`link`, `price_dollars`, `number_of_rooms`, `address`, `floor`, `floors_total`, `area_total_cm`, `area_living_cm`, `area_kitchen_cm`, `year_construction`) VALUES ('TEST', '105000', '4', 'Минск, Одинцова ул., 48', '1', '9', '906000', '581000', '126000', '2005');
