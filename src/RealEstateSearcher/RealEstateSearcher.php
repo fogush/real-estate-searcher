@@ -3,6 +3,7 @@
 namespace App\RealEstateSearcher;
 
 use App\Entity\Collection\RealEstateCollection;
+use App\Entity\RealEstate;
 use App\RealEstateSearcher\Provider\ProviderInterface;
 use App\RealEstateSearcher\Sender\SenderInterface;
 use App\Manager\RealEstateManager;
@@ -91,7 +92,6 @@ class RealEstateSearcher
 
     private function processRemoved(RealEstateCollection $parsedRealEstates): ?RealEstateCollection
     {
-        //TODO: implement this (mark deleted as 'deleted = 1' to do not grab them again)
         $deletedRealEstates = $this->getDeleted($parsedRealEstates);
 
         if ($deletedRealEstates->isEmpty()) {
@@ -114,17 +114,20 @@ class RealEstateSearcher
     {
         $newRealEstates = new RealEstateCollection();
 
-        foreach ($parsedRealEstates as $realEstate) {
-            $foundRealEstate = $this->realEstateManager->findByLink($realEstate->getLink());
+        foreach ($parsedRealEstates as $parsedRealEstate) {
+            $foundRealEstate = $this->realEstateManager->findByLink($parsedRealEstate->getLink());
 
             //Restore previously deleted real estates
             if ($foundRealEstate && $foundRealEstate->getDeleted()) {
                 $foundRealEstate->setDeleted(false);
+
+                $this->updatePriceIfChanged($foundRealEstate, $parsedRealEstate);
+
                 $newRealEstates->add($foundRealEstate);
             }
 
             if (!$foundRealEstate) {
-                $newRealEstates->add($realEstate);
+                $newRealEstates->add($parsedRealEstate);
             }
         }
 
@@ -154,5 +157,15 @@ class RealEstateSearcher
     private function sendDeleted(RealEstateCollection $realEstates): bool
     {
         return $this->sender->sendDeleted($realEstates);
+    }
+
+    private function updatePriceIfChanged(RealEstate $foundRealEstate, RealEstate $parsedRealEstate): void
+    {
+        if ($parsedRealEstate->getPriceDollars() !== $foundRealEstate->getPriceDollars()) {
+            $foundRealEstate->setOldPriceDollars($foundRealEstate->getPriceDollars());
+            $foundRealEstate->setPriceDollars($parsedRealEstate->getPriceDollars());
+        } else {
+            $foundRealEstate->setOldPriceDollars(null);
+        }
     }
 }

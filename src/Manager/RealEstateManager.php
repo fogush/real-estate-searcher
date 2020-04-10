@@ -35,7 +35,7 @@ class RealEstateManager
         return true;
     }
 
-    public function findByLink(string $link)
+    public function findByLink(string $link): ?RealEstate
     {
         return $this->repository->findOneBy(['link' => $link]);
     }

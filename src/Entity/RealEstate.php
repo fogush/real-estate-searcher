@@ -2,8 +2,8 @@
 
 namespace App\Entity;
 
-use Doctrine\ORM\Mapping AS ORM;
-use Symfony\Component\Validation\Constraints AS Assert;
+use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Validation\Constraints as Assert;
 
 /**
  * TODO: add constraints
@@ -31,6 +31,11 @@ class RealEstate
      * @ORM\Column(type="integer", name="price_dollars", options={"unsigned": true})
      */
     private $priceDollars;
+
+    /**
+     * @ORM\Column(type="integer", name="old_price_dollars", options={"unsigned": true}, nullable=true)
+     */
+    private $oldPriceDollars;
 
     /**
      * @ORM\Column(type="smallint", name="number_of_rooms", options={"unsigned": true})
@@ -116,6 +121,21 @@ class RealEstate
     public function getPriceDollars(): int
     {
         return $this->priceDollars;
+    }
+
+    public function setPriceDollars(int $priceDollars): void
+    {
+        $this->priceDollars = $priceDollars;
+    }
+
+    public function getOldPriceDollars(): ?int
+    {
+        return $this->oldPriceDollars;
+    }
+
+    public function setOldPriceDollars(?int $oldPriceDollars): void
+    {
+        $this->oldPriceDollars = $oldPriceDollars;
     }
 
     public function getNumberOfRooms(): int
